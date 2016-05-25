@@ -2,6 +2,13 @@
 
 import json
 import sys
+import argparse
+import re
+
+# Parse command-line options.
+parser = argparse.ArgumentParser(description="Translate a JSON Magic set file to plaintext.")
+parser.add_argument("-q", "--quiet", action="store_true", help="squelch unnecessary metadata (ability words and reminder text)")
+args = parser.parse_args()
 
 # Parse JSON from stdin.
 edition = json.loads(sys.stdin.read())
@@ -30,6 +37,10 @@ for card in edition["cards"]:
             if " - " in line and not line.startswith("Choose"):
                 lines[i] = "<" + line.replace("- ", "-> ")
         rules = "\n".join(lines)
+
+        if args.quiet:
+            # Strip all the stuff we just identified.
+            rules = re.sub("<[^>]*>", "", rules)
 
         print()
         # Add more metadata: name, cost, types, rarity.
