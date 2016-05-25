@@ -1,13 +1,20 @@
 #!/bin/bash
 
-TESTING=false
+# toggle between parsey and fake_parsey for testing
+PARSER=parsey
+
+# where was the syntaxnet repo cloned?
+TFLOW_MODELS_BASEDIR=~/models
+
 PARSER_EVAL=bazel-bin/syntaxnet/parser_eval
 MODEL_DIR=syntaxnet/models/parsey_mcparseface
 INPUT_FORMAT=stdin
 
-fake_process() {
+fake_parsey() {
     echo "v-- I WOULD PROCESS THIS PART --v"
-    echo -e "$1"
+    while read line; do
+        echo "$line"
+    done
     echo "^-------------------------------^"
 }
 
@@ -37,7 +44,7 @@ parsey() {
       --alsologtostderr
 }
 
-cd ~/models/syntaxnet
+cd $TFLOW_MODELS_BASEDIR/syntaxnet
 
 card=""
 initial_comments=true
@@ -56,11 +63,7 @@ while read line; do
             initial_comments=false
         else
             # our card is finished, pass it on
-            if $TESTING; then
-                fake_process "$card"
-            else
-                echo "$card" | parsey
-            fi
+            echo "$card" | $PARSER
             card=""
         fi
         echo
