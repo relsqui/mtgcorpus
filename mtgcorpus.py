@@ -9,6 +9,7 @@ import re
 parser = argparse.ArgumentParser(description="Translate a JSON Magic set file to plaintext.")
 parser.add_argument("-q", "--quiet", action="store_true", help="squelch unnecessary metadata (ability words and reminder text)")
 parser.add_argument("-s", "--split", action="store_true", help="split abilities into one line per sentence")
+parser.add_argument("-n", "--name", action="store_true", help="use NAME instead of ~ to replace a card's name in its rules text")
 args = parser.parse_args()
 
 # Parse JSON from stdin.
@@ -29,7 +30,11 @@ for card in edition["cards"]:
         rules = card["text"].replace("—", "-").replace("•", "*")
 
         # We find more interesting collocates if we abstract out card names.
-        rules = rules.replace(card["name"], "~")
+        if args.name:
+            replacement = "NAME"
+        else:
+            replacement = "~"
+        rules = rules.replace(card["name"], replacement)
         # Hide reminder text by putting it in angle brackets.
         rules = rules.replace("(", "<(").replace(")", ")>")
         # Split the rules into lines to find ability words and hide them too.
