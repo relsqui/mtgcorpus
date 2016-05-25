@@ -8,6 +8,7 @@ import re
 # Parse command-line options.
 parser = argparse.ArgumentParser(description="Translate a JSON Magic set file to plaintext.")
 parser.add_argument("-q", "--quiet", action="store_true", help="squelch unnecessary metadata (ability words and reminder text)")
+parser.add_argument("-s", "--split", action="store_true", help="split abilities into one line per sentence")
 args = parser.parse_args()
 
 # Parse JSON from stdin.
@@ -40,7 +41,13 @@ for card in edition["cards"]:
 
         if args.quiet:
             # Strip all the stuff we just identified.
-            rules = re.sub("<[^>]*>", "", rules)
+            rules = re.sub(" ?<[^>]*> ?", "", rules)
+
+        if args.split:
+            # Split multi-sentence abilities into one sentence per line.
+            # The predictability of Magic rules text writing allows us
+            # to do this VERY naively.
+            rules = rules.replace(". ", ".\n")
 
         print()
         # Add more metadata: name, cost, types, rarity.
