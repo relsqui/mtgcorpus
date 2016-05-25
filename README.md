@@ -110,4 +110,4 @@ And here's the output of `conllize.sh` for that same block. Metadata is now in #
 1. Follow the [instructions for setting up SyntaxNet](https://github.com/tensorflow/models/tree/master/syntaxnet). Clone it into your home directory, or else edit `conllize.sh` to reflect where you actually put it.
 2. Get the set files of your choice from [mtgjson.com](http://mtgjson.com/). We want the individual set files specifically because they include set-specific metadata. Unzip as needed.
 3. You should now have a bunch of JSON files in a directory, named things like `RTR.json`. Run `maketxt.sh` to automatically convert them into text files named things like `RTR.txt`, or convert individual files with `cat SOM.json | ./mtgcorpus.py > SOM.txt`.
-4. Convert text files to CONLL files with `cat BNG.txt | ./conllize.sh > BNG.conll`. This part takes a while! Be patient. (There's no mass conversion script yet, I'll get to it.)
+4. Likewise, you can `makeconll.sh` to convert text files to CONLL files en masse, or simply `cat BNG.txt | ./conllize.sh > BNG.conll`. This part takes a while! Be patient.
