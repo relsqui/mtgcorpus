@@ -76,5 +76,7 @@ while read line; do
         fi
     fi
 done
+# don't forget the last one!
+echo "$card" | $PARSER
 
-cd - 2>/dev/null
+cd - >/dev/null
