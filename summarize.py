@@ -20,6 +20,7 @@ card["lines"] = []
 line = []
 # used for tracking where we are in the card, see below
 meta_next = False
+cards_by_syntax = {}
 
 # chew through all the lines
 for d in data[4:]:
@@ -27,7 +28,13 @@ for d in data[4:]:
         # blank means we're done with the line we were reading
         if len(line):
             # it might be empty if the last line was blank too
-        card["lines"].append(line)
+            card["lines"].append(line)
+            # index 3 is the language-specific part of speech
+            key = tuple(l[3] for l in line)
+            if key in cards_by_syntax:
+                cards_by_syntax[key].append(card["name"])
+            else:
+                cards_by_syntax[key] = [card["name"]]
         line = []
     elif d[0] is "#":
         if meta_next:
@@ -47,4 +54,5 @@ for d in data[4:]:
         # just another token, append to the line
         line.append(tuple(d.split("\t")))
 
-pprint.pprint(cards[1])
+sorted_syntax = sorted(cards_by_syntax.items(), key=lambda s:len(s[1]), reverse=True)
+pprint.pprint(sorted_syntax)
