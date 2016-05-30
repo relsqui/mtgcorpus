@@ -55,4 +55,5 @@ for d in data[4:]:
         line.append(tuple(d.split("\t")))
 
 sorted_syntax = sorted(cards_by_syntax.items(), key=lambda s:len(s[1]), reverse=True)
+sorted_syntax = map(lambda s:(len(s[1]), s), sorted_syntax)
 pprint.pprint(sorted_syntax)
