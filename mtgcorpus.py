@@ -11,19 +11,25 @@ parser.add_argument("-q", "--quiet", action="store_true", help="squelch most non
 parser.add_argument("-s", "--split", action="store_true", help="split abilities into one line per sentence")
 parser.add_argument("-n", "--name", action="store_true", help="use NAME instead of ~ to replace a card's name in its rules text")
 parser.add_argument("-r", "--rulings", action="store_true", help="output rulings text instead of card text")
+parser.add_argument("-a", "--all", action="store_true", help="use all-cards file instead of set file")
 args = parser.parse_args()
 
 # Parse JSON from stdin.
 edition = json.loads(sys.stdin.read())
 
 # Start with headers giving some information about the set.
-if not args.quiet:
+if not args.quiet and not args.all:
     print("""<Set: {}>
     <Block: {}>
     <Release Date: {}>
     <Border: {}>""".format(edition["name"], edition.get("block", "n/a"), edition["releaseDate"], edition["border"]))
 
-for card in edition["cards"]:
+if args.all:
+    cardlist = edition.values()
+else:
+    cardlist = edition["cards"]
+
+for card in cardlist:
     # Only include cards that have any rules text.
     if not "text" in card:
         continue
@@ -70,7 +76,11 @@ for card in edition["cards"]:
     print()
     # Add more metadata: name, cost, types, rarity.
     print("<{}>".format(card["name"]))
-    print("<{} / {} / {}>".format(card.get("manaCost", ""), types, card["rarity"]))
+    if args.all:
+        # all-cards file doesn't have rarity, because it varies
+        print("<{} / {}>".format(card.get("manaCost", ""), types))
+    else:
+        print("<{} / {} / {}>".format(card.get("manaCost", ""), types, card["rarity"]))
 
     # The only concordancer-visible content is the actual rules.
     print(rules)
