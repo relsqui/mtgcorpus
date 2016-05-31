@@ -53,4 +53,4 @@ for d in data:
 
 sorted_syntax = sorted(cards_by_syntax.items(), key=lambda s:len(s[1]), reverse=True)
 for s in sorted_syntax:
-    print(str(len(s[1])) + "\t" + " ".join(s[0]) + "\t" + " ".join(s[1]))
+    print("\t".join([str(len(s[1])), str(len(s[0])), " ".join(s[0]), " ".join(s[1])]))

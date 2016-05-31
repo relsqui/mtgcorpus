@@ -122,10 +122,12 @@ Here's the output of `conllize.sh` for that same block. Metadata is now in # com
 
 Finally, `summarize.py` takes an entire CONLLized set file and groups card names by the syntax of sentences in their rules. When doing this, you'll want to have used the -s (split into sentences) and probably -q (squelch non-rules text) options to `mtgcorpus.py` (see above).
 
-A card as complex as Archangel Avacyn will appear many places in the summary output, but here's one example. This is the line that on Avacyn contains "Flying, vigilance" but on Felidar Sovereign is "Vigilance, lifelink," on Ghostly Sentinel is "Flying, vigilance," and so on.
+A card as complex as Archangel Avacyn will appear many places in the summary output, but here's one example. This is the line that on Avacyn contains "Flying, vigilance" but on Goldnight Castigator is "Flying, haste" and on Werewolf of Ancient Hunger is "Vigilance, trample."
+
+The first number is how many sentences on cards have this syntax. The second is how many tokens are in the sentence. ("Sentence" here means either a single standalone line, as in this case, or one of several parts of a line which are terminated by periods.)
 
 ```
-15      NN , NN <Felidar Sovereign> <Ghostly Sentinel> <Akoum Firebird> <Woodland Wanderer> <Misthoof Kirin> <Shieldhide Dragon> <Dragonlord Dromoka> <Dragonlord Kolaghan> <Steppe Glider> <Tajuru Pathwarden> <Stormchaser Mage> <Eagle of the Watch> <Archangel Avacyn> <Goldnight Castigator> <Werewolf of Ancient Hunger>
+3       3       NN , NN <Archangel Avacyn> <Goldnight Castigator> <Werewolf of Ancient Hunger>
 ```
 
 # usage
