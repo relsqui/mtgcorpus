@@ -9,10 +9,6 @@ def eprint(text):
 # grab all the data from stdin
 data = sys.stdin.read().splitlines()
 
-# print the file description comments to stderr
-for line in (data[:4]):
-    eprint(line)
-
 # set up variables to read cards into
 cards = []
 card = {}
@@ -23,14 +19,14 @@ meta_next = False
 cards_by_syntax = {}
 
 # chew through all the lines
-for d in data[4:]:
+for d in data:
     if not d:
         # blank means we're done with the line we were reading
         if len(line):
             # it might be empty if the last line was blank too
             card["lines"].append(line)
-            # index 3 is the language-specific part of speech
-            key = tuple(l[3] for l in line)
+            # index 4 is the language-specific part of speech
+            key = tuple(l[4] for l in line)
             if key in cards_by_syntax:
                 cards_by_syntax[key].append(card["name"])
             else:
@@ -47,7 +43,8 @@ for d in data[4:]:
             if card["lines"]:
                 cards.append(card)
             card = {}
-            card["name"] = d
+            # strip the initial # from the name
+            card["name"] = d[1:]
             # we should see a cost/type line next
             meta_next = True
     else:
@@ -55,5 +52,5 @@ for d in data[4:]:
         line.append(tuple(d.split("\t")))
 
 sorted_syntax = sorted(cards_by_syntax.items(), key=lambda s:len(s[1]), reverse=True)
-sorted_syntax = map(lambda s:(len(s[1]), s), sorted_syntax)
-pprint.pprint(sorted_syntax)
+for s in sorted_syntax:
+    print(str(len(s[1])) + "\t" + " ".join(s[0]) + "\t" + " ".join(s[1]))

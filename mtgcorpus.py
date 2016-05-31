@@ -7,7 +7,7 @@ import re
 
 # Parse command-line options.
 parser = argparse.ArgumentParser(description="Translate a JSON Magic set file to plaintext.")
-parser.add_argument("-q", "--quiet", action="store_true", help="squelch unnecessary metadata (ability words and reminder text)")
+parser.add_argument("-q", "--quiet", action="store_true", help="squelch non-rules text (headers, ability words, and reminder text)")
 parser.add_argument("-s", "--split", action="store_true", help="split abilities into one line per sentence")
 parser.add_argument("-n", "--name", action="store_true", help="use NAME instead of ~ to replace a card's name in its rules text")
 args = parser.parse_args()
@@ -16,10 +16,11 @@ args = parser.parse_args()
 edition = json.loads(sys.stdin.read())
 
 # Start with headers giving some information about the set.
-print("""<Set: {}>
-<Block: {}>
-<Release Date: {}>
-<Border: {}>""".format(edition["name"], edition.get("block", "n/a"), edition["releaseDate"], edition["border"]))
+if not args.quiet:
+    print("""<Set: {}>
+    <Block: {}>
+    <Release Date: {}>
+    <Border: {}>""".format(edition["name"], edition.get("block", "n/a"), edition["releaseDate"], edition["border"]))
 
 for card in edition["cards"]:
     # Only include cards that have any rules text.

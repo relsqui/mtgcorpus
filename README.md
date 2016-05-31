@@ -66,7 +66,8 @@ Translate a JSON Magic set file to plaintext.
 
 optional arguments:
   -h, --help   show this help message and exit
-  -q, --quiet  squelch unnecessary metadata (ability words and reminder text)
+  -q, --quiet  squelch non-rules text (headers, ability words, and reminder
+               text)
   -s, --split  split abilities into one line per sentence
   -n, --name   use NAME instead of ~ to replace a card's name in its rules
                text
@@ -122,26 +123,24 @@ Here's the output of `conllize.sh` for that same block. Metadata is now in # com
 
 Finally, `summarize.py` takes an entire CONLLized set file and groups card names by the syntax of sentences in their rules. When doing this, you'll want to have used the -s (split into sentences) and probably -q (squelch non-rules text) options to `mtgcorpus.py` (see above).
 
-A card as complex as Archangel Avacyn will appear many places in the summary output, but here's one example. This is the line that on Avacyn contains "Flying, vigilance" but on Mindwrack Demon is "Flying, trample," on Goldnight Castigator is "Flying, haste," etc.
+A card as complex as Archangel Avacyn will appear many places in the summary output, but here's one example. This is the line that on Avacyn contains "Flying, vigilance" but on Felidar Sovereign is "Vigilance, lifelink," on Ghostly Sentinel is "Flying, vigilance," and so on.
 
 ```
- (5,
-  (('NOUN', '.', 'NOUN'),
-   ['#<Archangel Avacyn>',
-    '#<Mindwrack Demon>',
-    '#<Goldnight Castigator>',
-    '#<Ancient of the Equinox>',
-    '#<Werewolf of Ancient Hunger>'])),
+15      NN , NN <Felidar Sovereign> <Ghostly Sentinel> <Akoum Firebird> <Woodland Wanderer> <Misthoof Kirin> <Shieldhide Dragon> <Dragonlord Dromoka> <Dragonlord Kolaghan> <Steppe Glider> <Tajuru Pathwarden> <Stormchaser Mage> <Eagle of the Watch> <Archangel Avacyn> <Goldnight Castigator> <Werewolf of Ancient Hunger>
 ```
 
 # usage
 
 1. Follow the [instructions for setting up SyntaxNet](https://github.com/tensorflow/models/tree/master/syntaxnet). Clone it into your home directory, or else edit `conllize.sh` to reflect where you actually put it.
 2. Get the set files of your choice from [mtgjson.com](http://mtgjson.com/). We want the individual set files specifically because they include set-specific metadata. Unzip as needed.
-3. You should now have a bunch of JSON files in a directory, named things like `RTR.json`. Run `maketxt.sh` to automatically convert them into text files named things like `RTR.txt`, or convert individual files with `cat SOM.json | ./mtgcorpus.py -qs > SOM.txt`. (The mass-conversion script doesn't include the -qs flags, but you can easily add it if that's what you're doing.)
+3. You should now have a bunch of JSON files in a directory, named things like `RTR.json`. Run `maketxt.sh` to automatically convert them into text files named things like `RTR.txt`, or convert individual files with `cat SOM.json | ./mtgcorpus.py -qns > SOM.txt`. (The mass-conversion script will add the -qns flags automatically.)
 4. Likewise, you can `makeconll.sh` to convert text files to CONLL files en masse, or simply `cat BNG.txt | ./conllize.sh > BNG.conll`. This part takes a while! Be patient.
-5. You can summarize the rules by syntax the same way: `cat FRF.conll | ./summarize.py > FRF_by_syntax.txt`
+5. You can summarize the rules by syntax the same way: `cat FRF.conll | ./summarize.py > FRF_by_syntax.txt`. If you used -q to omit the headers, you can cat together a bunch of CONLL files and summarize them all together: `cat *.conll | ./summarize.py > summary.txt`.
 
-The entire pipeline on one line:
+The entire processing pipeline for a single set, on one line:
 
-`cat MMA.json | ./mtgcorpus.py -qs | ./conllize.sh | ./summarize.py > MMA_by_syntax.txt`
+`cat MMA.json | ./mtgcorpus.py -qns | ./conllize.sh | ./summarize.py > MMA_by_syntax.txt`
+
+The entire processing pipeline for a bunch of sets, on one line:
+
+`./maketxt.sh && ./makeconll.sh && cat *.conll | ./summarize.py > summary.txt`
