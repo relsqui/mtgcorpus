@@ -60,17 +60,16 @@ When a non-Angel creature you control dies, transform ~ at the beginning of the 
 `mtgcorpus.py` takes a few optional arguments which clean the data up for use in later parts of the pipeline:
 
 ```
-usage: mtgcorpus.py [-h] [-q] [-s] [-n]
+usage: mtgcorpus.py [-h] [-q] [-s] [-n] [-r]
 
 Translate a JSON Magic set file to plaintext.
 
 optional arguments:
-  -h, --help   show this help message and exit
-  -q, --quiet  squelch non-rules text (headers, ability words, and reminder
-               text)
-  -s, --split  split abilities into one line per sentence
-  -n, --name   use NAME instead of ~ to replace a card's name in its rules
-               text
+  -h, --help     show this help message and exit
+  -q, --quiet    squelch most non-rules text (headers, ability words, and reminder text)
+  -s, --split    split abilities into one line per sentence
+  -n, --name     use NAME instead of ~ to replace a card's name in its rules text
+  -r, --rulings  output rulings text instead of card text
 ```
 
 Here's the output of `conllize.sh` for that same block. Metadata is now in # comments (and also pointy brackets). 
@@ -132,8 +131,8 @@ A card as complex as Archangel Avacyn will appear many places in the summary out
 # usage
 
 1. Follow the [instructions for setting up SyntaxNet](https://github.com/tensorflow/models/tree/master/syntaxnet). Clone it into your home directory, or else edit `conllize.sh` to reflect where you actually put it.
-2. Get the set files of your choice from [mtgjson.com](http://mtgjson.com/). We want the individual set files specifically because they include set-specific metadata. Unzip as needed.
-3. You should now have a bunch of JSON files in a directory, named things like `RTR.json`. Run `maketxt.sh` to automatically convert them into text files named things like `RTR.txt`, or convert individual files with `cat SOM.json | ./mtgcorpus.py -qns > SOM.txt`. (The mass-conversion script will add the -qns flags automatically.)
+2. Get the set files of your choice from [mtgjson.com](http://mtgjson.com/). We want the individual set files specifically because they include set-specific metadata. If you want to be able to use the -r flag to process rulings instead of rules text, get the SET-x.json ("with extras") files. Unzip as needed.
+3. You should now have a bunch of JSON files in a directory, named things like `RTR.json` (or `RTR-x.json`). Run `maketxt.sh` to automatically convert them into text files named things like `RTR.txt`, or convert individual files with `cat SOM.json | ./mtgcorpus.py -qns > SOM.txt`. (The mass-conversion script will add the -qns flags automatically. Add -r manually if you want to process rulings text.)
 4. Likewise, you can `makeconll.sh` to convert text files to CONLL files en masse, or simply `cat BNG.txt | ./conllize.sh > BNG.conll`. This part takes a while! Be patient.
 5. You can summarize the rules by syntax the same way: `cat FRF.conll | ./summarize.py > FRF_by_syntax.txt`. If you used -q to omit the headers, you can cat together a bunch of CONLL files and summarize them all together: `cat *.conll | ./summarize.py > summary.txt`.
 
