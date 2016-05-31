@@ -17,6 +17,7 @@ line = []
 # used for tracking where we are in the card, see below
 meta_next = False
 cards_by_syntax = {}
+seen_text = []
 
 # chew through all the lines
 for d in data:
@@ -26,11 +27,16 @@ for d in data:
             # it might be empty if the last line was blank too
             card["lines"].append(line)
             # index 4 is the language-specific part of speech
-            key = tuple(l[4] for l in line)
-            if key in cards_by_syntax:
-                cards_by_syntax[key].append(card["name"])
-            else:
-                cards_by_syntax[key] = [card["name"]]
+            pos = tuple(l[4] for l in line)
+            # index 1 is the token itself
+            text = " ".join(l[1] for l in line)
+            if text not in seen_text:
+                # don't add to stats if it's a duplicate!
+                seen_text.append(text)
+                if pos in cards_by_syntax:
+                    cards_by_syntax[pos].append(card["name"])
+                else:
+                    cards_by_syntax[pos] = [card["name"]]
         line = []
     elif d[0] is "#":
         if meta_next:
